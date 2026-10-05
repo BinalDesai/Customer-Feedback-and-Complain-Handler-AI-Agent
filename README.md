@@ -19,7 +19,8 @@ Customer feedback often sits unread in a form or inbox. When a customer is unhap
 5. **If complaint:** an apology email with a discount code is sent via **Gmail**, and a **Slack** alert is posted to the team.
 6. **If not a complaint:** a short thank-you email is sent.
 
-![Workflow](docs/images/workflow.png)
+![Workflow](docs/images/workflow.png)<img width="1953" height="724" alt="image" src="https://github.com/user-attachments/assets/4a8f71d4-eb4e-4be8-91ba-6025df38adf5" />
+
 
 ## Complaint rule
 
