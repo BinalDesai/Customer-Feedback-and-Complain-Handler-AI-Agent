@@ -1,0 +1,467 @@
+{
+  "name": "Customer Feedback and Complaint Handler",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Customer Feedback",
+        "formDescription": "We'd love to hear about your experience.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Your Name"
+            },
+            {
+              "fieldLabel": "Your Email",
+              "fieldType": "email"
+            },
+            {
+              "fieldLabel": "Rating (1-5)",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "Your Feedback",
+              "fieldType": "textarea"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        0,
+        0
+      ],
+      "id": "450310fd-1612-44d1-bed6-63f4529c66b9",
+      "name": "On form submission",
+      "webhookId": "24b7cf48-d8ee-4559-822f-129cef31e068"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze this customer feedback. Feedback: {{ $json['Your Feedback'] }}. Rating: {{ $json['Rating (1-5)'] }} out of 5. Respond ONLY with valid JSON in this exact format, no other text, no markdown: {\"sentiment\": \"positive|neutral|negative\", \"is_complaint\": \"yes|no\", \"summary\": \"one short sentence summarizing the feedback\"}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        224,
+        0
+      ],
+      "id": "d5ecebc5-94ad-4d9f-8870-b86435faed9b",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.6-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        208
+      ],
+      "id": "79559b63-c819-4a89-a7a3-a2b0bca8ea04",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "OwCpOQ3CbinnmOov",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "55717eca-795f-46de-b1db-4403f8d31493",
+              "name": "sentiment",
+              "value": "={{ JSON.parse($json.text).sentiment }}",
+              "type": "string"
+            },
+            {
+              "id": "28de1a48-9a63-4eeb-be90-6d6f05c91d7a",
+              "name": "is_complaint",
+              "value": "={{ JSON.parse($json.text).is_complaint }}",
+              "type": "string"
+            },
+            {
+              "id": "844f18fb-e685-410a-bfc7-f73e82af94ff",
+              "name": "summary",
+              "value": "= {{ JSON.parse($json.text).summary }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        592,
+        0
+      ],
+      "id": "357b8672-6b78-47db-8d5b-a9d287ea60d8",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1D9BWnPokF49qx4zA82zLMiucnXmDnOgRY6df6Ts-lWw",
+          "mode": "list",
+          "cachedResultName": "Customer Feedback Log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1D9BWnPokF49qx4zA82zLMiucnXmDnOgRY6df6Ts-lWw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1D9BWnPokF49qx4zA82zLMiucnXmDnOgRY6df6Ts-lWw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('On form submission').item.json['Your Name']}}",
+            "Email": "= {{ $('On form submission').item.json['Your Email']}} ",
+            "Rating": "= {{ $('On form submission').item.json['Rating (1-5)']}}",
+            "Feedback": "={{ $('On form submission').item.json['Your Feedback']}}",
+            "Sentiment": "= {{ $json.sentiment}}",
+            "IsComplaint": "= {{ $json.is_complaint}} ",
+            "Summary": "= {{ $json.summary}}",
+            "Timestamp": "= {{ $now }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Rating",
+              "displayName": "Rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Feedback",
+              "displayName": "Feedback",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sentiment",
+              "displayName": "Sentiment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "IsComplaint",
+              "displayName": "IsComplaint",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        816,
+        0
+      ],
+      "id": "fcf6e99e-c0a5-43c7-b380-9ea2ba6e9a27",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "zbpO8C4RhRLCocV2",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const aiComplaint = String($json.IsComplaint || '').trim().toLowerCase() === 'yes'; const rating = parseFloat(String($json.Rating).trim()); const lowRating = !isNaN(rating) && rating <= 2; const codes = ['SORRY10', 'SORRY15', 'SORRY20', 'THANKYOU10']; const discountCode = codes[Math.floor(Math.random() * codes.length)]; return { json: { ...$json, isComplaintFlag: aiComplaint || lowRating, discountCode } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "3d2d9be4-174e-4cb7-9d74-3cb81b645683",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "bdb5a4dc-af1e-4ae9-860f-ed4596d17640",
+              "leftValue": "={{$json.isComplaintFlag}}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1264,
+        0
+      ],
+      "id": "d9e2965d-ef66-4dc1-8557-60083f6f936b",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "project_alerts ",
+          "mode": "name"
+        },
+        "text": "=⚠️ Negative feedback received From: \n{{ $('On form submission').item.json['Your Name'] }} ({{ $('On form submission').item.json['Your Email'] }}) \nRating: {{ $('On form submission').item.json['Rating (1-5)'] }}/5 \nFeedback: {{ $('On form submission').item.json['Your Feedback'] }} \nSummary: {{ $('Edit Fields').item.json.summary }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        1488,
+        -96
+      ],
+      "id": "05a0bffb-9273-45b9-8bfd-379173b33976",
+      "name": "Send a message",
+      "webhookId": "25d1ef93-5db6-4847-a443-231cb673013c",
+      "credentials": {
+        "slackApi": {
+          "id": "hUH72QiBvF5EY7gA",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "= {{ $json.Email }}",
+        "subject": "We're sorry about your recent experience",
+        "message": "= Hi {{ $json.Name }},<br><br>\n\nWe're truly sorry to hear about your experience. Your feedback matters to us, and we're already looking into it.\n\nAs an apology, please use code SORRY10 for 10% off your next order.\n\nThank you for your patience.\n<br><br>Warm regards,<br>The Customer Care Team",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1488,
+        -320
+      ],
+      "id": "da90e91d-4dfe-4fcd-846a-1e4a63f6b847",
+      "name": "Send a message1",
+      "webhookId": "b77bcecc-13e2-4673-82bb-429435a8cbb8",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YFiwLB95hB18TO2H",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{$('On form submission').item.json['Your Email']}}",
+        "subject": "Thank you for your feedback!",
+        "message": "=Hi {{ $('On form submission').item.json['Your Name'] }},<br><br>Thank you for taking the time to share your feedback. We're glad you had a good experience and look forward to serving you again.<br><br>Warm regards,<br>The Customer Care Team",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1488,
+        96
+      ],
+      "id": "2367ab7c-0728-41ec-a3a8-752dcd008973",
+      "name": "Send a message2",
+      "webhookId": "ede1b487-d693-4042-8f2f-f89ad8ef22cb",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YFiwLB95hB18TO2H",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "6d6c9835-f536-41fc-a3dd-6811c4a114a3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "932689d1335d6010cf500ab36616df563193264351f16fde3f342f7a432d70a5"
+  },
+  "nodeGroups": [],
+  "id": "KNoVxe02lw884Yjf",
+  "tags": []
+}
