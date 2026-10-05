@@ -87,9 +87,7 @@ A submission is a complaint if **either** is true:
 
 ## Documentation
 
-- [User Guide (PDF)](docs/Customer_Feedback_Handler_User_Guide.pdf)
+- [User Guide (PDF)] https://github.com/BinalDesai/Customer-Feedback-and-Complain-Handler-AI-Agent/blob/main/Customer_Feedback_Handler_User_Guide.pdf
 
 
-## License
 
-MIT License (add a `LICENSE` file if you want others to reuse this project).
