@@ -45,19 +45,7 @@ A submission is a complaint if **either** is true:
 | Slack | Internal complaint alerts |
 | Gmail | Automatic customer replies |
 
-## Repository structure
 
-```
-.
-├── README.md
-├── workflow/
-│   └── Customer_Feedback_and_Complaint_Handler.json   # n8n workflow export
-├── docs/
-│   ├── Customer_Feedback_Handler_User_Guide.pdf
-│   ├── Customer_Feedback_Handler_Presentation.pptx
-│   └── images/                                        # screenshots
-└── .gitignore
-```
 
 ## Setup
 
