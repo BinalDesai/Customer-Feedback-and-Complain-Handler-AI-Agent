@@ -99,7 +99,7 @@ A submission is a complaint if **either** is true:
 ## Documentation
 
 - [User Guide (PDF)](docs/Customer_Feedback_Handler_User_Guide.pdf)
-- [Project Presentation (PPTX)](docs/Customer_Feedback_Handler_Presentation.pptx)
+
 
 ## License
 
